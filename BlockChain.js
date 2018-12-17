@@ -10,24 +10,47 @@ class Blockchain {
 
     constructor() {
         this.levelDBWrapper = new LevelSandbox.LevelSandbox();
-        this.generateGenesisBlock();
+        this.checkThenAddGenesisBlock();
     }
 
-    // Auxiliar method to create a Genesis Block (always with height= 0)
-    // You have to options, because the method will always execute when you create your blockchain
-    // you will need to set this up statically or instead you can verify if the height !== 0 then you
-    // will not create the genesis block
-    generateGenesisBlock() {
+    // Check if the genesis block does not exist already in the Blockchain
+    // else add.
+    checkThenAddGenesisBlock() {
+        let self = this;
+        this.levelDBWrapper.getBlocksCount().then((count) => {
+            if(count == 0) {
+                console.log("Adding GENESIS block");
+                this.addGenesisBlock();
+            } else {
+                console.log("Genesis block exists. Not adding!");
+            }
+        }).catch((err) => {
+            console.log(err);
+        });;
+    }
+
+    /**
+     * Create an in-memory genesis block.
+     */
+    getGenesisBlock() {
         const block = new Block.Block("GENESIS BLOCK");
         block.time = new Date().getTime();
         block.height = 0;
         // not setting previousBlockHash, as it will be empty for
         // Genesis block
         block.hash = SHA256(JSON.stringify(block)).toString();
+        return block;
+    }
 
-        // test our block representation by logging it
+    /**
+     * Add genesis/first block to the blockchain
+     */
+    addGenesisBlock() {
+        const block = this.getGenesisBlock();
+
+        // uncomment below test our block representation by logging it
         // on the console.
-        console.log(JSON.stringify(block));
+        // console.log(JSON.stringify(block));
         this.levelDBWrapper.addLevelDBData(block.height, block).then((message) => {
             console.log(message);
         }).catch((err) => {

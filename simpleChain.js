@@ -9,7 +9,7 @@ let myBlockChain = new BlockChain.Blockchain();
 
 setTimeout(function () {
 	console.log("Waiting...")
-}, 1000);
+}, 10);
 
 /******************************************
  ** Function for Create Tests Blocks   ****
@@ -45,11 +45,11 @@ myBlockChain.getBlockHeight().then((height) => {
  ***********************************************/
 
 // Be careful this only will work if `getBlock` method in Blockchain.js file return a Promise
-myBlockChain.getBlock(0).then((block) => {
+/* myBlockChain.getBlock(0).then((block) => {
 	console.log(JSON.stringify(block));
 }).catch((err) => { 
 	console.log(err);
-});
+}); */
 
 
 /***********************************************
