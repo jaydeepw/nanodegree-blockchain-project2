@@ -18,7 +18,20 @@ class Blockchain {
     // you will need to set this up statically or instead you can verify if the height !== 0 then you
     // will not create the genesis block
     generateGenesisBlock() {
-        // Add your code here
+
+        // todo: check if the current blockchain height is 0.
+        // insert only then.
+
+        const block = new Block.Block("GENESIS BLOCK");
+        block.time = new Date().getTime();
+        block.height = 0;
+        // not setting previousBlockHash, as it will be empty for
+        // Genesis block
+        block.hash = SHA256(JSON.stringify(block)).toString();
+
+        // test our block representation by logging it
+        // on the console.
+        console.log(JSON.stringify(block));
     }
 
     // Get block height, it is auxiliar method that return the height of the blockchain
@@ -29,6 +42,7 @@ class Blockchain {
     // Add new block
     addBlock(block) {
         // Add your code here
+        console.log(block);
     }
 
     // Get Block By Height
