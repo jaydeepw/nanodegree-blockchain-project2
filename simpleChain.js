@@ -25,7 +25,7 @@ setTimeout(function () {
 			i++;
 			if (i < 10) theLoop(i);
 		});
-	}, 10000);
+	}, 800);
   })(0);
 
 
