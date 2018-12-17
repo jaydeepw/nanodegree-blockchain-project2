@@ -9,7 +9,7 @@ const Block = require('./Block.js');
 class Blockchain {
 
     constructor() {
-        this.bd = new LevelSandbox.LevelSandbox();
+        this.levelDBWrapper = new LevelSandbox.LevelSandbox();
         this.generateGenesisBlock();
     }
 
@@ -18,10 +18,6 @@ class Blockchain {
     // you will need to set this up statically or instead you can verify if the height !== 0 then you
     // will not create the genesis block
     generateGenesisBlock() {
-
-        // todo: check if the current blockchain height is 0.
-        // insert only then.
-
         const block = new Block.Block("GENESIS BLOCK");
         block.time = new Date().getTime();
         block.height = 0;
@@ -32,11 +28,29 @@ class Blockchain {
         // test our block representation by logging it
         // on the console.
         console.log(JSON.stringify(block));
+        this.levelDBWrapper.addLevelDBData(block.height, block).then((message) => {
+            console.log(message);
+        }).catch((err) => {
+            console.log(err);
+        });;
     }
 
     // Get block height, it is auxiliar method that return the height of the blockchain
     getBlockHeight() {
         // Add your code here
+        /* return new Promise(function(resolve, reject) {
+            let dataArray = [];
+            this.bd.createReadStream()
+            .on('data', function (data) {
+                dataArray.push(data);
+            })
+            .on('error', function (err) {
+                reject(err)
+            })
+            .on('close', function () {
+                resolve(dataArray.length);
+            });
+        }); */
     }
 
     // Add new block
@@ -47,7 +61,7 @@ class Blockchain {
 
     // Get Block By Height
     getBlock(height) {
-        // Add your code here
+        return this.levelDBWrapper.getLevelDBData(height);
     }
 
     // Validate if Block is being tampered by Block Height
