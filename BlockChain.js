@@ -125,7 +125,40 @@ class Blockchain {
 
     // Validate if Block is being tampered by Block Height
     validateBlock(height) {
-        // Add your code here
+        let self = this;
+        return new Promise(function(resolve, reject) {
+            self.getBlock(height).then((block) => {
+                // lets convert block to object.
+                let blockFromChain = JSON.parse(block);
+
+                // this will be the same block, but before its hash was set.
+                // So we will have to copy values from chain's block to this one
+                // WITHOUT setting the hash.
+                let blockToCompare = new Block.Block(blockFromChain.body);
+                // set hash to empty coz this was the state of the chain's block
+                // before setting this hash property.
+                blockToCompare.hash = "";
+
+                // copy chain's block values.
+                blockToCompare.time = blockFromChain.time;
+                blockToCompare.height = blockFromChain.height;
+                blockToCompare.previousBlockHash = blockFromChain.previousBlockHash;
+
+                // now we have the hash of the block with empty hash property.
+                let blockHash = SHA256(JSON.stringify(blockToCompare)).toString();
+                /* console.log("blockHash: " + blockHash);
+                console.log("block.hash: " + blockFromChain.hash); */
+                if(!blockFromChain || !blockFromChain.hash) {
+                    reject("Bad block!");
+                } else if(blockHash === blockFromChain.hash) {
+                    resolve(true);
+                } else {
+                    resolve(false);
+                }
+            }).catch((error) => {
+                console.log(error);
+            });
+        });
     }
 
     // Validate Blockchain

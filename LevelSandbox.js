@@ -64,10 +64,7 @@ class LevelSandbox {
                     resolve(dataSet.length);
                 });
             });
-
     }
-        
-
 }
 
 module.exports.LevelSandbox = LevelSandbox;

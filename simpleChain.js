@@ -20,11 +20,11 @@ setTimeout(function () {
 	setTimeout(function () {
 		let blockTest = new Block.Block("Test Block - " + (i + 1));
 		// Be careful this only will work if your method 'addBlock' in the Blockchain.js file return a Promise
-		myBlockChain.addBlock(blockTest).then((result) => {
+		/* myBlockChain.addBlock(blockTest).then((result) => {
 			// console.log(result);
 			i++;
 			if (i < 1) theLoop(i);
-		});
+		}); */
 	}, 300);
   })(0);
 
@@ -34,11 +34,11 @@ setTimeout(function () {
  ***********************************************/
 
 // Be careful this only will work if `getBlockHeight` method in Blockchain.js file return a Promise
-/* myBlockChain.getBlockHeight().then((height) => {
+myBlockChain.getBlockHeight().then((height) => {
 	console.log("height of the chain: " + height);
 }).catch((err) => {
 	console.log(err);
-}); */
+});
 
 
 /***********************************************
@@ -46,28 +46,32 @@ setTimeout(function () {
  ***********************************************/
 
 // Be careful this only will work if `getBlock` method in Blockchain.js file return a Promise
-myBlockChain.getBlock(1).then((block) => {
+/* myBlockChain.getBlock(1).then((block) => {
 	let blockObject = JSON.parse(block);
 	console.log("hash " + blockObject.hash);
 	console.log("prevHash " + blockObject.previousBlockHash);
 }).catch((err) => {
 	console.log(err);
-});
+}); */
 
 
 /***********************************************
  ***************** Validate Block  *************
  ***********************************************/
 
-/*
+
 // Be careful this only will work if `validateBlock` method in Blockchain.js file return a Promise
-myBlockChain.validateBlock(0).then((valid) => {
-	console.log(valid);
-})
-.catch((error) => {
+let blockNumer = 3;
+myBlockChain.validateBlock(blockNumer).then((valid) => {
+	if(valid) {
+		console.log("Block #" + blockNumer + " is VALID!");
+	} else {
+		console.log("Block #" + blockNumer + " is NOT VALID!");
+	}
+}).catch((error) => {
 	console.log(error);
-})
-*/
+});
+
 
 /** Tampering a Block this is only for the purpose of testing the validation methods */
 /*
