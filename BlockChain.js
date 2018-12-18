@@ -85,7 +85,7 @@ class Blockchain {
                     // Genesis block inserted into the blockchain.
                     reject("fatal error! Invalid Height of the " +
                     "initialized blockchain. Height: " + height);
-                    return;
+                    self.addGenesisBlock();
                 }
     
                 // good to go. Now save it in low level storage.
