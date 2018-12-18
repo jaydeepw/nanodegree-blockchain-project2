@@ -49,6 +49,7 @@ setTimeout(function () {
 myBlockChain.getBlock(1).then((block) => {
 	let blockObject = JSON.parse(block);
 	console.log("hash " + blockObject.hash);
+	console.log("prevHash " + blockObject.previousBlockHash);
 }).catch((err) => {
 	console.log(err);
 });
