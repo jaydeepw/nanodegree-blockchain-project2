@@ -68,14 +68,38 @@ class Blockchain {
                 resolve(height);
             }).catch((err) => {
                 reject(err);
-            });    
-        });        
+            });
+        });   
     }
 
-    // Add new block
+    // Add new block to the chain.
     addBlock(block) {
-        // Add your code here
-        console.log(block);
+        let self = this;
+        return new Promise(function(resolve, reject) {
+            self.getBlockHeight().then((height) => {
+                console.log("height: " + height);
+                if(height == -1) {
+                    // height of a blockchain that does not have a single
+                    // block will be -1;
+                    // At this point, there SHOULD DEFINITELY be a 
+                    // Genesis block inserted into the blockchain.
+                    reject("fatal error! Invalid Height of the " +
+                    "initialized blockchain. Height: " + height);
+                    return;
+                }
+    
+                // good to go.
+                block.height = height + 1;
+                block.time = new Date().getTime();
+                block.previousBlockHash = "WRONG HASH";
+                block.hash = SHA256(JSON.stringify(block)).toString();
+                self.levelDBWrapper.addLevelDBData(block.height, block);
+                resolve(block);
+            }).catch((err) => {
+                reject(err);
+            });
+        });
+        
     }
 
     // Get Block By Height
