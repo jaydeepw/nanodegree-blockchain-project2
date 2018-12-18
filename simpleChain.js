@@ -20,11 +20,11 @@ setTimeout(function () {
 	setTimeout(function () {
 		let blockTest = new Block.Block("Test Block - " + (i + 1));
 		// Be careful this only will work if your method 'addBlock' in the Blockchain.js file return a Promise
-		myBlockChain.addBlock(blockTest).then((result) => {
+		/* myBlockChain.addBlock(blockTest).then((result) => {
 			console.log(result);
 			i++;
-			if (i < 6) theLoop(i);
-		});
+			if (i < 1) theLoop(i);
+		}); */
 	}, 300);
   })(0);
 
@@ -34,9 +34,11 @@ setTimeout(function () {
  ***********************************************/
 
 // Be careful this only will work if `getBlockHeight` method in Blockchain.js file return a Promise
-myBlockChain.getBlockHeight().then((height) => {
+/* myBlockChain.getBlockHeight().then((height) => {
 	console.log("height of the chain: " + height);
-}).catch((err) => { console.log(err);});
+}).catch((err) => {
+	console.log(err);
+}); */
 
 
 /***********************************************
@@ -44,11 +46,12 @@ myBlockChain.getBlockHeight().then((height) => {
  ***********************************************/
 
 // Be careful this only will work if `getBlock` method in Blockchain.js file return a Promise
-/* myBlockChain.getBlock(0).then((block) => {
-	console.log(JSON.stringify(block));
-}).catch((err) => { 
+myBlockChain.getBlock(0).then((block) => {
+	let blockObject = JSON.parse(block);
+	console.log("hash " + blockObject.hash);
+}).catch((err) => {
 	console.log(err);
-}); */
+});
 
 
 /***********************************************

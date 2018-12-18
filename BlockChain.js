@@ -88,7 +88,7 @@ class Blockchain {
                     return;
                 }
     
-                // good to go.
+                // good to go. Now save it in low level storage.
                 block.height = height + 1;
                 block.time = new Date().getTime();
                 block.previousBlockHash = "WRONG HASH";
@@ -99,12 +99,18 @@ class Blockchain {
                 reject(err);
             });
         });
-        
     }
 
     // Get Block By Height
     getBlock(height) {
-        return this.levelDBWrapper.getLevelDBData(height);
+        let self = this;
+        return new Promise(function(resolve, reject) {
+            self.levelDBWrapper.getLevelDBData(height).then((block) => {
+                resolve(block);
+            }).catch((err) => {
+                reject(err);
+            });
+        });   
     }
 
     // Validate if Block is being tampered by Block Height

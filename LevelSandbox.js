@@ -29,7 +29,8 @@ class LevelSandbox {
     addLevelDBData(key, value) {
         let self = this;
         return new Promise(function(resolve, reject) {
-            self.db.put(key, value.toString(), function (err, value) {
+            // adding value to DB as a string instead of an object.
+            self.db.put(key, JSON.stringify(value), function (err, value) {
                 if (err) {
                   if (err.notFound) {
                     // handle a 'NotFoundError' here
