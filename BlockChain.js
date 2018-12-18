@@ -55,25 +55,21 @@ class Blockchain {
             console.log(message);
         }).catch((err) => {
             console.log(err);
-        });;
+        });
     }
 
     // Get block height, it is auxiliar method that return the height of the blockchain
     getBlockHeight() {
-        // Add your code here
-        /* return new Promise(function(resolve, reject) {
-            let dataArray = [];
-            this.bd.createReadStream()
-            .on('data', function (data) {
-                dataArray.push(data);
-            })
-            .on('error', function (err) {
-                reject(err)
-            })
-            .on('close', function () {
-                resolve(dataArray.length);
-            });
-        }); */
+        let self = this;
+        return new Promise(function(resolve, reject) {
+            self.levelDBWrapper.getBlocksCount().then((count) => {
+                let height = count - 1;
+                // height will be one less than the count of blocks
+                resolve(height);
+            }).catch((err) => {
+                reject(err);
+            });    
+        });        
     }
 
     // Add new block
