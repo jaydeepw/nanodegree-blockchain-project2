@@ -85,16 +85,26 @@ class Blockchain {
                     // Genesis block inserted into the blockchain.
                     reject("fatal error! Invalid Height of the " +
                     "initialized blockchain. Height: " + height);
+
+                    // add the genesis block if not exists in the chain.
                     self.addGenesisBlock();
+                    // now the height of the chain will increase
+                    height++;
                 }
-    
-                // good to go. Now save it in low level storage.
-                block.height = height + 1;
-                block.time = new Date().getTime();
-                block.previousBlockHash = "WRONG HASH";
-                block.hash = SHA256(JSON.stringify(block)).toString();
-                self.levelDBWrapper.addLevelDBData(block.height, block);
-                resolve(block);
+
+                // to get the previous block hash, we get previous block
+                self.getBlock(height).then((previousBlock) => {
+                    let previousBlockObject = JSON.parse(previousBlock);
+                   // good to go. Now save it in low level storage.
+                    block.height = height + 1;
+                    block.time = new Date().getTime();
+                    block.previousBlockHash = previousBlockObject.hash;
+                    block.hash = SHA256(JSON.stringify(block)).toString();
+                    self.levelDBWrapper.addLevelDBData(block.height, block);
+                    resolve(block); 
+                }).catch((err) => {
+                    console.log(err);
+                });
             }).catch((err) => {
                 reject(err);
             });

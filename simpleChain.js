@@ -20,11 +20,11 @@ setTimeout(function () {
 	setTimeout(function () {
 		let blockTest = new Block.Block("Test Block - " + (i + 1));
 		// Be careful this only will work if your method 'addBlock' in the Blockchain.js file return a Promise
-		/* myBlockChain.addBlock(blockTest).then((result) => {
-			console.log(result);
+		myBlockChain.addBlock(blockTest).then((result) => {
+			// console.log(result);
 			i++;
 			if (i < 1) theLoop(i);
-		}); */
+		});
 	}, 300);
   })(0);
 
@@ -46,7 +46,7 @@ setTimeout(function () {
  ***********************************************/
 
 // Be careful this only will work if `getBlock` method in Blockchain.js file return a Promise
-myBlockChain.getBlock(0).then((block) => {
+myBlockChain.getBlock(1).then((block) => {
 	let blockObject = JSON.parse(block);
 	console.log("hash " + blockObject.hash);
 }).catch((err) => {
