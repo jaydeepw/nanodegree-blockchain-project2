@@ -164,6 +164,8 @@ class Blockchain {
     // Validate Blockchain
     validateChain() {
         // Add your code here
+        // let promise = this.validateBlock();
+
     }
 
     // Utility Method to Tamper a Block for Test Validation

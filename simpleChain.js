@@ -61,7 +61,7 @@ myBlockChain.getBlockHeight().then((height) => {
 
 
 // Be careful this only will work if `validateBlock` method in Blockchain.js file return a Promise
-let blockNumer = 3;
+let blockNumer = 0;
 myBlockChain.validateBlock(blockNumer).then((valid) => {
 	if(valid) {
 		console.log("Block #" + blockNumer + " is VALID!");
