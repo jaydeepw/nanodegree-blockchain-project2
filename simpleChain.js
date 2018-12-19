@@ -8,7 +8,8 @@ const Block = require('./Block.js');
 let myBlockChain = new BlockChain.Blockchain();
 
 setTimeout(function () {
-	console.log("Waiting...")
+	// not understanding the use of this method
+	// console.log("Waiting...");
 }, 10);
 
 /******************************************
@@ -23,9 +24,9 @@ setTimeout(function () {
 		/* myBlockChain.addBlock(blockTest).then((result) => {
 			// console.log(result);
 			i++;
-			if (i < 1) theLoop(i);
+			if (i < 100) theLoop(i);
 		}); */
-	}, 300);
+	}, 10);
   })(0);
 
 
@@ -61,7 +62,7 @@ myBlockChain.getBlockHeight().then((height) => {
 
 
 // Be careful this only will work if `validateBlock` method in Blockchain.js file return a Promise
-let blockNumer = 0;
+/* let blockNumer = 0;
 myBlockChain.validateBlock(blockNumer).then((valid) => {
 	if(valid) {
 		console.log("Block #" + blockNumer + " is VALID!");
@@ -70,7 +71,7 @@ myBlockChain.validateBlock(blockNumer).then((valid) => {
 	}
 }).catch((error) => {
 	console.log(error);
-});
+}); */
 
 
 /** Tampering a Block this is only for the purpose of testing the validation methods */
@@ -108,10 +109,9 @@ myBlockChain.getBlock(6).then((block) => {
  ***************** Validate Chain  *************
  ***********************************************/
 
-/*
 // Be careful this only will work if `validateChain` method in Blockchain.js file return a Promise
 myBlockChain.validateChain().then((errorLog) => {
-	if(errorLog.length > 0){
+	if(errorLog.length > 0) {
 		console.log("The chain is not valid:");
 		errorLog.forEach(error => {
 			console.log(error);
@@ -119,8 +119,6 @@ myBlockChain.validateChain().then((errorLog) => {
 	} else {
 		console.log("No errors found, The chain is Valid!");
 	}
-})
-.catch((error) => {
+}).catch((error) => {
 	console.log(error);
 })
-*/

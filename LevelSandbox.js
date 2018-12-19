@@ -48,7 +48,6 @@ class LevelSandbox {
     // Method that return the height
     getBlocksCount() {
         let self = this;
-        // Add your code here, remember un Promises you need to resolve() or reject()
         return new Promise(function(resolve, reject) {
             let dataSet = [];
                 self.db.createReadStream()

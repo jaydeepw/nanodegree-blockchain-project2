@@ -116,11 +116,15 @@ class Blockchain {
         let self = this;
         return new Promise(function(resolve, reject) {
             self.levelDBWrapper.getLevelDBData(height).then((block) => {
-                resolve(block);
+                if(block) {
+                    resolve(block);
+                } else {
+                    reject("Invalid block");    
+                }
             }).catch((err) => {
                 reject(err);
             });
-        });   
+        });
     }
 
     // Validate if Block is being tampered by Block Height
@@ -163,9 +167,47 @@ class Blockchain {
 
     // Validate Blockchain
     validateChain() {
-        // Add your code here
-        // let promise = this.validateBlock();
+        let self = this;
+        return new Promise(function(resolve, reject) {
+            let errorLog = [];
+            // tried using Promise.all(promises).then((results) => { ... });
+            // here but was not able to figure out how to use it.
+            // Didnt spend too much time on making it work as I already
+            // gave this project a lot of time. Went with a simpler approach.
+            self.levelDBWrapper.getBlocksCount().then((count) => {
+                console.log("Validating total " + count + " blocks!");
+                for (let i = 0; i < count; i++) {
+                    // let currentBlock = n
+                    self.validateBlock(i).then((valid) => {
+                        if(valid) {
+                            // block is valid.
+                            console.log("Valid block #" + i);
+                        } else {
+                            // collect all invalid blocks in the list
+                            errorLog.push("Invalid block #" + i);
+                        }
 
+                        // ensure that we are coming to a 
+                        // decision about the validity of the chain
+                        // only when we have scanned through the entire
+                        // chain and no more blocks remain.
+                        if(i == count - 1) {
+                            if(errorLog) {
+                                resolve(errorLog);
+                            } else {
+                                reject("Not able to collect error logs");
+                            }
+                        }
+                    }).catch((error) => {
+                        console.log(error);
+                        reject(error);
+                    });
+                }   // end for
+            }).catch((err) => {
+                console.log(err);
+                reject(error);
+            });
+        });
     }
 
     // Utility Method to Tamper a Block for Test Validation
