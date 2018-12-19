@@ -24,7 +24,7 @@ setTimeout(function () {
 		/* myBlockChain.addBlock(blockTest).then((result) => {
 			// console.log(result);
 			i++;
-			if (i < 200) theLoop(i);
+			if (i < 5) theLoop(i);
 		}); */
 	}, 10);
   })(0);

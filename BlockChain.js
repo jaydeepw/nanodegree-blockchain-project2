@@ -168,6 +168,8 @@ class Blockchain {
     // Validate Blockchain
     validateChain() {
         let self = this;
+        let previousBlockHash = null;
+        let currentBlockPrevHash = null;        
         return new Promise(function(resolve, reject) {
             let errorLog = [];
             // tried using Promise.all(promises).then((results) => { ... });
@@ -179,8 +181,6 @@ class Blockchain {
                 for (let i = 0; i < count; i++) {
                     self.getBlock(i).then((block) => {
                         self.validateBlock(i).then((valid) => {
-                            let previousBlockHash = null;
-                            let currentBlockPrevHash = null;
                             let blockObject = JSON.parse(block);
                             currentBlockPrevHash = blockObject.previousBlockHash;
                             console.log("Block #" + i);
