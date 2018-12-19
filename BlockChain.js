@@ -153,7 +153,7 @@ class Blockchain {
                 /* console.log("blockHash: " + blockHash);
                 console.log("block.hash: " + blockFromChain.hash); */
                 if(!blockFromChain || !blockFromChain.hash) {
-                    reject("Bad block!");
+                    reject("Bad block for height: " + height);
                 } else if(blockHash === blockFromChain.hash) {
                     resolve(true);
                 } else {
@@ -177,27 +177,64 @@ class Blockchain {
             self.levelDBWrapper.getBlocksCount().then((count) => {
                 console.log("Validating total " + count + " blocks!");
                 for (let i = 0; i < count; i++) {
-                    // let currentBlock = n
-                    self.validateBlock(i).then((valid) => {
-                        if(valid) {
+                    self.getBlock(i).then((block) => {
+                        self.validateBlock(i).then((valid) => {
+                            let previousBlockHash = null;
+                            let currentBlockPrevHash = null;
+                            let blockObject = JSON.parse(block);
+                            currentBlockPrevHash = blockObject.previousBlockHash;
+                            console.log("Block #" + i);
+                            console.log("currentBlockPrevHash: " + currentBlockPrevHash);
+                            console.log("previousBlockHash: " + previousBlockHash);
+                            if(valid) {
+                                console.log("valid block " + valid);
+                                // now check the links between the blocks
+                                if(i != 0) {
+                                    // any block other than GENESIS block
+                                    if(currentBlockPrevHash === previousBlockHash) {
+                                        // valid link
+                                        console.log("Valid link");
+                                    } else {
+                                        errorLog.push("The link between block at height: " + i +
+                                    " and height: " + (i - 1) + " does not match");
+                                    }
+                                } else {
+                                    // in case of genesis block
+                                    if(previousBlockHash) {
+                                        // previous hash will be empty
+                                        errorLog.push("previousBlockHash should be equal to \"\" for a GENESIS BLOCK");
+                                    }
+
+                                    if(!blockObject.hash) {
+                                        // should have a valid hash
+                                        errorLog.push("Invalid hash for the GENESIS BLOCK");
+                                    }
+                                }
+                            } else {
+                                errorLog.push("Invalid block at height: " + i);
+                            }
+
+                            previousBlockHash = blockObject.hash;
+
+                            // ensure that we are coming to a 
+                            // decision about the validity of the chain
+                            // only when we have scanned through the entire
+                            // chain and no more blocks remain.
+                            if(i == count - 1) {
+                                resolve(errorLog);
+                            }
+                        }).catch((err) => {
+                            console.log(err);
+                            errorLog.push(err);
+                        });
+
+                        /* if(valid) {
                             // block is valid.
                             console.log("Valid block #" + i);
                         } else {
                             // collect all invalid blocks in the list
                             errorLog.push("Invalid block #" + i);
-                        }
-
-                        // ensure that we are coming to a 
-                        // decision about the validity of the chain
-                        // only when we have scanned through the entire
-                        // chain and no more blocks remain.
-                        if(i == count - 1) {
-                            if(errorLog) {
-                                resolve(errorLog);
-                            } else {
-                                reject("Not able to collect error logs");
-                            }
-                        }
+                        } */
                     }).catch((error) => {
                         console.log(error);
                         reject(error);

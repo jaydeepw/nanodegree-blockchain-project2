@@ -24,7 +24,7 @@ setTimeout(function () {
 		/* myBlockChain.addBlock(blockTest).then((result) => {
 			// console.log(result);
 			i++;
-			if (i < 100) theLoop(i);
+			if (i < 200) theLoop(i);
 		}); */
 	}, 10);
   })(0);
@@ -62,7 +62,7 @@ myBlockChain.getBlockHeight().then((height) => {
 
 
 // Be careful this only will work if `validateBlock` method in Blockchain.js file return a Promise
-/* let blockNumer = 0;
+/* let blockNumer = 19;
 myBlockChain.validateBlock(blockNumer).then((valid) => {
 	if(valid) {
 		console.log("Block #" + blockNumer + " is VALID!");
