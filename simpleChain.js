@@ -10,6 +10,17 @@ let myBlockChain = new BlockChain.Blockchain();
 setTimeout(function () {
 	// not understanding the use of this method
 	// console.log("Waiting...");
+	/* let blockTest = new Block.Block("Test Block - 00");
+	blockTest.height = 3;
+	blockTest.time = new Date().getTime();
+	blockTest.previousBlockHash = "";
+	blockTest.hash = "";
+	myBlockChain._modifyBlock(blockTest.height, blockTest).then((blockModified) => {
+		console.log("blockModified: " + blockModified);
+		validateBlockChain();
+	}); */
+
+	validateBlockChain();
 }, 10);
 
 /******************************************
@@ -24,7 +35,7 @@ setTimeout(function () {
 		/* myBlockChain.addBlock(blockTest).then((result) => {
 			// console.log(result);
 			i++;
-			if (i < 5) theLoop(i);
+			if (i < 200) theLoop(i);
 		}); */
 	}, 10);
   })(0);
@@ -62,7 +73,7 @@ myBlockChain.getBlockHeight().then((height) => {
 
 
 // Be careful this only will work if `validateBlock` method in Blockchain.js file return a Promise
-/* let blockNumer = 19;
+/* let blockNumer = 99;
 myBlockChain.validateBlock(blockNumer).then((valid) => {
 	if(valid) {
 		console.log("Block #" + blockNumer + " is VALID!");
@@ -110,15 +121,17 @@ myBlockChain.getBlock(6).then((block) => {
  ***********************************************/
 
 // Be careful this only will work if `validateChain` method in Blockchain.js file return a Promise
-myBlockChain.validateChain().then((errorLog) => {
-	if(errorLog.length > 0) {
-		console.log("The chain is not valid:");
-		errorLog.forEach(error => {
-			console.log(error);
-		});
-	} else {
-		console.log("No errors found, The chain is Valid!");
-	}
-}).catch((error) => {
-	console.log(error);
-})
+function validateBlockChain() {
+	myBlockChain.validateChain().then((errorLog) => {
+		if(errorLog.length > 0) {
+			console.log("The chain is not valid:");
+			errorLog.forEach(error => {
+				console.log(error);
+			});
+		} else {
+			console.log("No errors found, The chain is Valid!");
+		}
+	}).catch((error) => {
+		console.log(error);
+	})
+}

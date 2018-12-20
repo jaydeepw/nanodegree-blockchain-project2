@@ -152,7 +152,7 @@ class Blockchain {
                 let blockHash = SHA256(JSON.stringify(blockToCompare)).toString();
                 /* console.log("blockHash: " + blockHash);
                 console.log("block.hash: " + blockFromChain.hash); */
-                if(!blockFromChain || !blockFromChain.hash) {
+                if(blockFromChain == null ) {
                     reject("Bad block for height: " + height);
                 } else if(blockHash === blockFromChain.hash) {
                     resolve(true);
@@ -168,82 +168,62 @@ class Blockchain {
     // Validate Blockchain
     validateChain() {
         let self = this;
-        let previousBlockHash = null;
-        let currentBlockPrevHash = null;        
+        let countTotal = null;
         return new Promise(function(resolve, reject) {
             let errorLog = [];
-            // tried using Promise.all(promises).then((results) => { ... });
-            // here but was not able to figure out how to use it.
-            // Didnt spend too much time on making it work as I already
-            // gave this project a lot of time. Went with a simpler approach.
             self.levelDBWrapper.getBlocksCount().then((count) => {
-                console.log("Validating total " + count + " blocks!");
-                for (let i = 0; i < count; i++) {
-                    self.getBlock(i).then((block) => {
-                        self.validateBlock(i).then((valid) => {
-                            let blockObject = JSON.parse(block);
-                            currentBlockPrevHash = blockObject.previousBlockHash;
-                            console.log("Block #" + i);
-                            console.log("currentBlockPrevHash: " + currentBlockPrevHash);
-                            console.log("previousBlockHash: " + previousBlockHash);
-                            if(valid) {
-                                console.log("valid block " + valid);
-                                // now check the links between the blocks
-                                if(i != 0) {
-                                    // any block other than GENESIS block
-                                    if(currentBlockPrevHash === previousBlockHash) {
-                                        // valid link
-                                        console.log("Valid link");
-                                    } else {
-                                        errorLog.push("The link between block at height: " + i +
-                                    " and height: " + (i - 1) + " does not match");
-                                    }
-                                } else {
-                                    // in case of genesis block
-                                    if(previousBlockHash) {
-                                        // previous hash will be empty
-                                        errorLog.push("previousBlockHash should be equal to \"\" for a GENESIS BLOCK");
-                                    }
+                countTotal = count;
+                // console.log("count: " + countTotal);
+                if(countTotal > 50) {
+                    console.log("Validating chain. Please wait!");
+                }
+                self.validateChainAsync(0, countTotal, errorLog, resolve, reject, null);
+            }).catch((error) => {
+                console.log(error);
+            })
+        });
+    }
 
-                                    if(!blockObject.hash) {
-                                        // should have a valid hash
-                                        errorLog.push("Invalid hash for the GENESIS BLOCK");
-                                    }
-                                }
-                            } else {
-                                errorLog.push("Invalid block at height: " + i);
-                            }
+    validateChainAsync(i, count, errorLog, 
+        resolve, reject, prevBlockHash) {
+        let self = this;
+        let currentBlockPrevHash = null;
+        // get the block at height=i;
+        self.getBlock(i).then((blockJson) => {
+            let block = JSON.parse(blockJson);
+            currentBlockPrevHash = block.previousBlockHash;
+            /* console.log("currentBlockPrevHash: " + currentBlockPrevHash);
+            console.log("prevBlockHash: " + prevBlockHash); */
+            // console.log("block #" + (i+1) + " height: " + block.height);
+            // validate link
+            if(i == 0) {
+                // check following conditions for GENESIS BLOCK
+                if(block.previousBlockHash) {
+                    errorLog.push("GENESIS BLOCK has NON EMPTY previousBlockHash: " + currentBlockPrevHash);
+                }
 
-                            previousBlockHash = blockObject.hash;
+                if(!block.hash) {
+                    errorLog.push("GENESIS BLOCK has INVLID HASH: " + block.hash);
+                }
+            } else if(prevBlockHash !== currentBlockPrevHash) {
+                errorLog.push("block #" + i + " NOT linked to block #" + (i-1));
+            } else {
+                // console.log("Valid link!");
+            }
 
-                            // ensure that we are coming to a 
-                            // decision about the validity of the chain
-                            // only when we have scanned through the entire
-                            // chain and no more blocks remain.
-                            if(i == count - 1) {
-                                resolve(errorLog);
-                            }
-                        }).catch((err) => {
-                            console.log(err);
-                            errorLog.push(err);
-                        });
-
-                        /* if(valid) {
-                            // block is valid.
-                            console.log("Valid block #" + i);
-                        } else {
-                            // collect all invalid blocks in the list
-                            errorLog.push("Invalid block #" + i);
-                        } */
-                    }).catch((error) => {
-                        console.log(error);
-                        reject(error);
-                    });
-                }   // end for
-            }).catch((err) => {
-                console.log(err);
-                reject(error);
+            self.validateBlock(block.height).then((valid) => {
+                if(!valid) {
+                    errorLog.push("Block #" + (i+1) + " invalid!");
+                }
+                
+                setTimeout(function () {
+                    i++;
+                    if(i < count) self.validateChainAsync(i, count, errorLog, resolve, reject, block.hash);
+                    else resolve(errorLog);
+                }, 10);
             });
+        }).catch((err) => {
+            reject(err);
         });
     }
 
@@ -252,7 +232,7 @@ class Blockchain {
     _modifyBlock(height, block) {
         let self = this;
         return new Promise( (resolve, reject) => {
-            self.bd.addLevelDBData(height, JSON.stringify(block).toString()).then((blockModified) => {
+            self.levelDBWrapper.addLevelDBData(height, block).then((blockModified) => {
                 resolve(blockModified);
             }).catch((err) => { console.log(err); reject(err)});
         });
